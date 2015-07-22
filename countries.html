@@ -1,1 +1,27 @@
-hello there
+<div class="row">
+	<div class="col-sm-12 col-xs-12 col-md-12">
+		<table class="countryList">
+			<tr>
+				<th>Name</th>
+				<th>Country Code</th>
+				<th>Capital</th>
+				<th>Area in km2</th>
+				<th>Population</th>
+				<th>Continent</th>
+			</tr>
+			<tr ng-repeat="country in dataSet" ng-click="viewCountry(country.countryCode, country.capital)">
+				<td ng-bind="country.countryName"></td>
+				<td ng-bind="country.countryCode"></td>
+				<td ng-bind="country.capital"></td>
+				<td ng-bind="country.areaInSqKm | number"></td>
+				<td ng-bind="country.population | number"></td>
+				<td ng-bind="country.continent"></td>
+			</tr>
+		</table>
+	</div>
+	<div class="col-sm-12 col-xs-12 col-md-12 text-center">
+		<form action="#/">
+			<input type="submit" value="Home">
+		</form>
+	</div>
+</div>
