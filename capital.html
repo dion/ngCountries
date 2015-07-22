@@ -1,10 +1,70 @@
-capital goes in here
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-9">
+		<div class="col-md-12">
+			<h1 ng-bind="dataSet.countryName"></h1>
+		</div>
 
+		<div class="col-md-3">
+			Population of Country:
+		</div>
+		<div class="col-md-9">
+			<span ng-bind="parentCountry.population"></span>
+		</div>
 
+		<div class="col-md-3">
+			Area:
+		</div>
+		<div class="col-md-9">
+			<span ng-bind="parentCountry.areaInSqKm"></span>
+		</div>
 
-<form action="#/">
-	<input type="submit" value="Home">
-</form>
-<form action="#/countries">
-	<input type="submit" value="Browse Countries">
-</form>
+		<div class="col-md-3">
+			Capital:
+		</div>
+		<div class="col-md-9">
+			<span ng-bind="dataSet.toponymName"></span>
+		</div>
+
+		<div class="col-md-3">
+			Population of Capital:
+		</div>
+		<div class="col-md-9">
+			<span ng-bind="dataSet.population"></span>
+		</div>
+
+		<div class="col-md-3">
+			Continent:
+		</div>
+		<div class="col-md-9">
+			<span ng-bind="parentCountry.continentName"></span>
+		</div>
+
+		<div class="col-md-3">
+			<span ng-bind="neighbors.totalResultsCount"></span> Neighbors:
+		</div>
+		<div class="col-md-9">
+			<ul class="neighbors_list">
+				<li ng-repeat="item in neighbors.geonames"><a href="#/countries/{{item.countryCode}}" ng-bind="item.countryName"></a></li>
+			</ul>
+		</div>
+
+		<div class="col-md-3">
+			<img src="http://www.geonames.org/img/country/250/{{ dataSet.countryCode }}.png" />
+		</div>
+		<div class="col-md-9">
+			<img src="http://www.geonames.org/flags/x/{{ dataSet.countryCode | lowercase }}.gif" width="250" />
+		</div>
+	</div>
+
+	<div class="col-md-12 text-center">
+		<form action="#/">
+			<input type="submit" value="Home">
+		</form>
+		<form action="#/countries">
+			<input type="submit" value="Browse Countries">
+		</form>
+	</div>
+
+</div>
+

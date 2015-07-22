@@ -5,3 +5,12 @@
 	overflow:scroll;
 	border:1px solid #000;
 }
+.neighbors_list {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+.neighbors_list li {
+	float:left;
+	padding-right:5px;
+}
