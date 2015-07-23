@@ -2,35 +2,30 @@
 	<div class="col-md-3"></div>
 	<div class="col-md-9">
 		<div class="col-md-12">
-			<h1 ng-bind="dataSet.countryName"></h1>
+			<h1 ng-bind="parentCountry.countryName"></h1>
 		</div>
 
 		<div class="col-md-3">
 			Population of Country:
 		</div>
 		<div class="col-md-9">
-			<span ng-bind="parentCountry.population"></span>
+			<span ng-bind="parentCountry.population | number"></span>
 		</div>
 
 		<div class="col-md-3">
 			Area:
 		</div>
 		<div class="col-md-9">
-			<span ng-bind="parentCountry.areaInSqKm"></span>
+			<span ng-bind="parentCountry.areaInSqKm | number"></span>
 		</div>
 
-		<div class="col-md-3">
-			Capital:
-		</div>
-		<div class="col-md-9">
-			<span ng-bind="dataSet.toponymName"></span>
-		</div>
-
-		<div class="col-md-3">
-			Population of Capital:
-		</div>
-		<div class="col-md-9">
-			<span ng-bind="dataSet.population"></span>
+		<div ng-if="parentCountry.capital">
+			<div class="col-md-3">
+				Capital:
+			</div>
+			<div class="col-md-9">
+				<span ng-bind="parentCountry.capital"></span>
+			</div>
 		</div>
 
 		<div class="col-md-3">
@@ -40,9 +35,6 @@
 			<span ng-bind="parentCountry.continentName"></span>
 		</div>
 
-		<div class="col-md-3">
-			<span ng-bind="neighbors.totalResultsCount"></span> Neighbors:
-		</div>
 		<div class="col-md-9">
 			<ul class="neighbors_list">
 				<li ng-repeat="item in neighbors.geonames"><a href="#/countries/{{item.countryCode}}" ng-bind="item.countryName"></a></li>
@@ -65,4 +57,3 @@
 	</div>
 
 </div>
-

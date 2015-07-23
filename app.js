@@ -1,14 +1,32 @@
 angular.module('countries', ['ngRoute', 'ngAnimate'])
+	.run(function($rootScope, $location, $timeout) {
+	    $rootScope.$on('$routeChangeError', function() {
+	        $location.path("/error");
+	    });
+	    $rootScope.$on('$routeChangeStart', function() {
+	        $rootScope.isLoading = true;
+	    });
+	    /*$rootScope.$on('$routeChangeSuccess', function() {
+	      $timeout(function() {
+	      //  $rootScope.isLoading = false;
+	      }, 1000);
+	    });*/
+	})
 	.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
 		$httpProvider.defaults.useXDomain = true;
 		 //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 		$routeProvider.when('/', {
-			templateUrl: 'home.html'
+			templateUrl: 'home.html',
+			controller: 'HomeCtrl as home'
 		})
 		.when('/countries', {
 			templateUrl: 'countries.html',
 			controller: 'CountriesCtrl as countryList'
+		})
+		.when('/countries/:country', {
+			templateUrl: 'country.html',
+			controller: 'CountryCtrl as country'
 		})
 		.when('/countries/:country/:capital', {
 			templateUrl: 'capital.html',
@@ -62,10 +80,46 @@ angular.module('countries', ['ngRoute', 'ngAnimate'])
 			});
 		}
 	}])
-	.controller('CountriesCtrl', ['$scope', '$http', '$location', 'getCountries', function ($scope, $http, $location, getCountries) {
+	.factory('getCountry', [function () { 
+		return function (list, countryCode, capital) {
+			for (var i = 0, len = list.length; i < len; ++i) {
+				if (countryCode != undefined && capital != undefined) {
+					if (list[i].countryCode == countryCode && list[i].capital == capital) {
+						return list[i];
+					}
+				} else if (countryCode && capital == undefined) {
+					if (list[i].countryCode == countryCode) {
+						return list[i];
+					}
+				} 
+			}
+		}
+	}])
+	.controller('HomeCtrl', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+		$timeout(function() {
+			$rootScope.isLoading = false;
+		}, 100);
+	}])
+	.controller('CountryCtrl', ['$rootScope', '$scope', '$routeParams', 
+								'getCountry', 'getCountries', function ($rootScope, $scope, $routeParams, getCountry, getCountries) {
+		var countryCode = $routeParams.country;
+
+		getCountries()
+		.success(function (result) {
+			$scope.parentCountry = getCountry(result.geonames, countryCode);
+			$rootScope.isLoading = false;
+		})
+		.error(function() {
+			console.log('error');
+		});
+	}])
+	.controller('CountriesCtrl', ['$rootScope', '$scope', '$http', 
+								  '$location', 'getCountries', function ($rootScope, $scope, $http, $location, getCountries) {
 		getCountries()
 		.success(function (result) {
 			$scope.dataSet = result.geonames;
+			$rootScope.isLoading = false;
+
 		})
 		.error(function() {
 			console.log('error');
@@ -77,47 +131,38 @@ angular.module('countries', ['ngRoute', 'ngAnimate'])
 			}
 		};
 	}])
-	.controller('CapitalCtrl', ['$scope', '$http', '$q', 
+	.controller('CapitalCtrl', ['$rootScope', '$scope', '$http', '$q', 
 								'$routeParams', 'getSearch', 
-								'getCountries', 'getNeighbors', 
-		function ($scope, $http, $q, $routeParams, getSearch, getCountries, getNeighbors) {
+								'getCountries', 'getNeighbors', 'getCountry',
+		function ($rootScope, $scope, $http, $q, $routeParams, getSearch, getCountries, getNeighbors, getCountry) {
 			var countryCode = $routeParams.country,
-			    capital = $routeParams.capital,
-			    self = this;
+			    capital = $routeParams.capital;
 
-			this.filterCountry = function (list, countryCode, capital) {
-				for (var i = 0, len = list.length; i < len; ++i) {
-					if (list[i].countryCode == countryCode && list[i].capital == capital) {
-						return list[i];
-					}
-				}
-			};
+			function errorMsg (err) {
+				console.log(error);
+			}
 
 			getCountries()
 			.success(function (result) {
-				$scope.parentCountry = self.filterCountry(result.geonames, countryCode, capital);
+				$scope.parentCountry = getCountry(result.geonames, countryCode, capital);
+				$rootScope.isLoading = false;
+
 				//console.log($scope.parentCountry);
 			})
-			.error(function () {
-				console.log('error');
-			});
+			.error(errorMsg);
 
 			getSearch(countryCode, capital)
 			.success(function (result) {
 				$scope.dataSet = result.geonames[0];
 				//console.log($scope.dataSet);
 			})
-			.error(function() {
-				console.log('error');
-			});
+			.error(errorMsg);
 
 			getNeighbors(countryCode)
 			.success(function (result) {
 				console.log(result);
 				$scope.neighbors = result;
 			})
-			.error(function () {
-				console.log('error');
-			});
+			.error(errorMsg);
 
 	}]);
